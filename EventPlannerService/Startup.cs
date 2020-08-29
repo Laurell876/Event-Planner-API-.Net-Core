@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EventPlannerService.Common;
 using EventPlannerService.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -20,6 +21,7 @@ namespace EventPlannerService
 {
     public class Startup
     {
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -32,6 +34,18 @@ namespace EventPlannerService
         {
             var connection = Configuration.GetConnectionString("EventsDatabase");
             services.AddDbContextPool<EventsContext>(options => options.UseSqlServer(connection));
+
+            services.AddScoped<IAuthHelper, AuthHelper>();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                                  builder =>
+                                  {
+                                      builder.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyHeader(); // url must not contain trailing /
+                                  });
+            });
+
             services.AddControllers();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -51,6 +65,7 @@ namespace EventPlannerService
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        // order matters
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -61,6 +76,8 @@ namespace EventPlannerService
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(MyAllowSpecificOrigins); // has to be after routing
 
             app.UseAuthentication();
 

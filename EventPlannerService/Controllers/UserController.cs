@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EventPlannerService.Common;
 using EventPlannerService.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,14 +15,16 @@ namespace EventPlannerService.Controllers
     public class UserController : ControllerBase
     {
         private readonly EventsContext _context;
+        private IAuthHelper _authHelper;
 
-        public UserController(EventsContext context)
+        public UserController(EventsContext context, IAuthHelper authHelper)
         {
             _context = context;
+            _authHelper = authHelper;
         }
 
         [HttpPost] // api/user
-        public async Task<ActionResult<UserInfo>> Signup(UserInfo userInfo)
+        public async Task<ActionResult<UserAndTokenData>> Signup(UserInfo userInfo)
         {
             var emailExists = await _context.UserInfo.FirstOrDefaultAsync(u => u.Email.Equals(userInfo.Email));
             if (emailExists != null) return Conflict("User already exists");
@@ -30,9 +33,16 @@ namespace EventPlannerService.Controllers
 
             _context.UserInfo.Add(userInfo);
             await _context.SaveChangesAsync();
-            return CreatedAtAction("GetUsers", new { id = userInfo.UserId }, userInfo);
+            //return CreatedAtAction("GetUsers", new { id = userInfo.UserId }, userInfo);
+            //return Created("http://localhost:61720/api/user", userInfo);
+            //return userInfo.UserId;
+            string accessToken = await _authHelper.getToken(userInfo);
 
+            UserAndTokenData userAndTokenData = new UserAndTokenData(userInfo, accessToken);
+            return userAndTokenData;
         }
+
+
 
 
         public async Task<ActionResult<UserInfo>> GetUsers(int id)

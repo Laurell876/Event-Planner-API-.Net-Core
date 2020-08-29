@@ -1,38 +1,36 @@
-﻿using System;
+﻿using EventPlannerService.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.CSharp.RuntimeBinder;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using EventPlannerService.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.Win32.SafeHandles;
 
-namespace EventPlannerService.Controllers
+namespace EventPlannerService.Common
 {
-
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthHelper : IAuthHelper
     {
-        public IConfiguration _configuration;
+
+        private IConfiguration _configuration;
         private readonly EventsContext _context;
 
 
-        public AuthController(IConfiguration configuration, EventsContext context)
+        public AuthHelper(IConfiguration configuration, EventsContext eventsContext)
         {
             _configuration = configuration;
-            _context = context;
+            _context = eventsContext;
+
         }
 
 
-        [HttpPost]
-        public async Task<UserAndTokenData> Login(UserInfo _userData)
+
+        public async Task<String> getToken(UserInfo _userData)
         {
 
             if (_userData != null && _userData.Email != null && _userData.Password != null)
@@ -58,11 +56,8 @@ namespace EventPlannerService.Controllers
                     var signIn = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
                     var token = new JwtSecurityToken(_configuration["Jwt:Issuer"], _configuration["Jwt:Audience"], claims, expires: DateTime.UtcNow.AddDays(1), signingCredentials: signIn);
-
-                    //return Ok(new JwtSecurityTokenHandler().WriteToken(token));
-                    string accessToken = new JwtSecurityTokenHandler().WriteToken(token);
-                    UserAndTokenData userAndTokenData = new UserAndTokenData(user, accessToken);
-                    return userAndTokenData;
+                    //return token.ToString();
+                    return new JwtSecurityTokenHandler().WriteToken(token);
                 }
                 else
                 {
@@ -75,9 +70,16 @@ namespace EventPlannerService.Controllers
             }
         }
 
+        private IActionResult BadRequest(string v)
+        {
+            throw new NotImplementedException();
+        }
+
         private async Task<UserInfo> GetUser(string email, string password)
         {
             return await _context.UserInfo.FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
         }
     }
+
+
 }
