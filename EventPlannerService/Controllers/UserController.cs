@@ -24,22 +24,27 @@ namespace EventPlannerService.Controllers
         }
 
         [HttpPost] // api/user
-        public async Task<ActionResult<UserAndTokenData>> Signup(UserInfo userInfo)
+        public async Task<IActionResult> Signup(UserInfo userInfo)
         {
-            var emailExists = await _context.UserInfo.FirstOrDefaultAsync(u => u.Email.Equals(userInfo.Email));
-            if (emailExists != null) return Conflict("User already exists");
+            if (userInfo != null && userInfo.Email != null && userInfo.Password != null)
+            {
+                var emailExists = await _context.UserInfo.FirstOrDefaultAsync(u => u.Email.Equals(userInfo.Email));
+                if (emailExists != null) return Conflict("User already exists");
 
+                _context.UserInfo.Add(userInfo);
+                await _context.SaveChangesAsync();
+                //return CreatedAtAction("GetUsers", new { id = userInfo.UserId }, userInfo);
+                //return Created("http://localhost:61720/api/user", userInfo);
+                //return userInfo.UserId;
+                string accessToken = await _authHelper.getToken(userInfo);
 
-
-            _context.UserInfo.Add(userInfo);
-            await _context.SaveChangesAsync();
-            //return CreatedAtAction("GetUsers", new { id = userInfo.UserId }, userInfo);
-            //return Created("http://localhost:61720/api/user", userInfo);
-            //return userInfo.UserId;
-            string accessToken = await _authHelper.getToken(userInfo);
-
-            UserAndTokenData userAndTokenData = new UserAndTokenData(userInfo, accessToken);
-            return userAndTokenData;
+                UserAndTokenData userAndTokenData = new UserAndTokenData(userInfo, accessToken);
+                return StatusCode(201, userAndTokenData);
+            }
+            else
+            {
+                return BadRequest("Please enter all required fields");
+            }
         }
 
 

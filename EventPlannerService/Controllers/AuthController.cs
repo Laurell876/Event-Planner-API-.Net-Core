@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,7 +34,7 @@ namespace EventPlannerService.Controllers
 
 
         [HttpPost]
-        public async Task<UserAndTokenData> Login(UserInfo _userData)
+        public async Task<IActionResult> Login(UserInfo _userData)
         {
 
             if (_userData != null && _userData.Email != null && _userData.Password != null)
@@ -62,18 +64,19 @@ namespace EventPlannerService.Controllers
                     //return Ok(new JwtSecurityTokenHandler().WriteToken(token));
                     string accessToken = new JwtSecurityTokenHandler().WriteToken(token);
                     UserAndTokenData userAndTokenData = new UserAndTokenData(user, accessToken);
-                    return userAndTokenData;
+                    return Ok(userAndTokenData);
                 }
                 else
                 {
-                    throw new InvalidOperationException("Invalid Credentials");
+                    return Unauthorized("Invalid Credentials");
                 }
             }
             else
             {
-                throw new InvalidOperationException("Please enter all required fields");
+                return BadRequest("Please enter all required fields");
             }
         }
+
 
         private async Task<UserInfo> GetUser(string email, string password)
         {
