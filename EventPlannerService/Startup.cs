@@ -43,7 +43,7 @@ namespace EventPlannerService
                 options.AddPolicy(name: MyAllowSpecificOrigins,
                                   builder =>
                                   {
-                                      builder.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyHeader(); // url must not contain trailing /
+                                      builder.WithOrigins("http://localhost:4200").AllowAnyHeader().AllowAnyMethod(); // url must not contain trailing /
                                   });
             });
 
