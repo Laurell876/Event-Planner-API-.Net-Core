@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "IuigFCMDr9tD5kd48ULDNukk2BGH5VapACRnt4FC4YGUTkueKTle9WS+NnJKPCtgr+sJdR73RRNxduT0bp0fhw==",
+  "dgSpecHash": "V7jHv7UobAjvudBNTASOTQAMXheoEJsHZgY0FyjN3JDYuAoQSbqx/K5WeQW22ONFULRoDcbb89MLpjqaKr6q4A==",
   "success": true,
   "projectFilePath": "C:\\Users\\Laurell Seville\\Dev\\EventPlanner\\EventPlannerService\\EventPlannerService\\EventPlannerService.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Laurell Seville\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\3.1.0\\microsoft.aspnetcore.authentication.jwtbearer.3.1.0.nupkg.sha512",
+    "C:\\Users\\Laurell Seville\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\3.1.7\\microsoft.aspnetcore.authentication.jwtbearer.3.1.7.nupkg.sha512",
     "C:\\Users\\Laurell Seville\\.nuget\\packages\\microsoft.aspnetcore.html.abstractions\\2.2.0\\microsoft.aspnetcore.html.abstractions.2.2.0.nupkg.sha512",
     "C:\\Users\\Laurell Seville\\.nuget\\packages\\microsoft.aspnetcore.razor\\2.2.0\\microsoft.aspnetcore.razor.2.2.0.nupkg.sha512",
     "C:\\Users\\Laurell Seville\\.nuget\\packages\\microsoft.aspnetcore.razor.language\\3.1.0\\microsoft.aspnetcore.razor.language.3.1.0.nupkg.sha512",

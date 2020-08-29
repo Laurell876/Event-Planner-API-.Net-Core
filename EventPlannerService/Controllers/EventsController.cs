@@ -24,9 +24,10 @@ namespace EventPlannerService.Controllers
 
         // GET: api/Events
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Events>>> GetEvents()
+        public async Task<ActionResult<int>> GetEvents(HttpRequest httpRequest)
         {
-            return await _context.Events.ToListAsync();
+            return httpRequest.HttpContext.Items.Count;
+            //return await _context.Events.ToListAsync();
         }
 
         // GET: api/Events/5
